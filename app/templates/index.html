@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Real-Time Object Detection</title>
+    <style>
+        /* === Dynamic Background with Gradient Overlay === */
+        body {
+            margin: 0;
+            font-family: 'Playfair Display', 'Georgia', serif; /* Elegant font */
+            color: #f0e8e0; /* Soft cream */
+            text-align: center;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-attachment: fixed;
+            overflow-x: hidden;
+            position: relative;
+            animation: fadeInBackground 3s ease-in-out infinite alternate;
+        }
+
+        /* Subtle gradient overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.3), rgba(0, 40, 60, 0.4));
+            z-index: -1;
+        }
+
+        /* Background fade animation */
+        @keyframes fadeInBackground {
+            from { filter: brightness(0.9); }
+            to { filter: brightness(1.1); }
+        }
+
+        /* Floating container with lift effect */
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px); /* Frosted glass effect */
+            margin: 5% auto;
+            padding: 40px;
+            width: 80%;
+            max-width: 700px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), 0 0 0 2px rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transform: translateY(0);
+            transition: transform 0.6s ease, box-shadow 0.6s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 0 3px rgba(255, 255, 255, 0.2);
+        }
+
+        /* Stylized headings */
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 2px;
+            background: #28a745;
+            animation: pulse 1.5s infinite;
+        }
+
+        /* Pulse animation */
+        @keyframes pulse {
+            0% { width: 50px; }
+            50% { width: 60px; }
+            100% { width: 50px; }
+        }
+
+        /* Form elements */
+        label {
+            display: block;
+            margin: 15px 0 8px;
+            text-align: left;
+            font-size: 1.1em;
+            color: #e0dcdc;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        input[type="file"], input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            border: none;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        input[type="file"]:focus, input[type="text"]:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
+        }
+
+        /* Stylized button */
+        button {
+            background: linear-gradient(45deg, #28a745, #218838);
+            color: #fff;
+            padding: 14px 28px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        button::before {
+            content: '▶';
+            position: absolute;
+            left: -20px;
+            opacity: 0;
+            transition: all 0.4s ease;
+        }
+
+        button:hover {
+            background: linear-gradient(45deg, #218838, #1e7e34);
+            padding-left: 40px;
+        }
+
+        button:hover::before {
+            left: 10px;
+            opacity: 1;
+        }
+
+        /* Video with decorative frame */
+        video {
+            margin-top: 30px;
+            border-radius: 15px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* Floating animation */
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0); }
+        }
+
+        /* Download link */
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        a::after {
+            content: '↓';
+            position: absolute;
+            right: 10px;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        a:hover {
+            background: linear-gradient(45deg, #0056b3, #003d7a);
+            padding-right: 40px;
+        }
+
+        a:hover::after {
+            opacity: 1;
+        }
+
+        /* Global fade-in animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .container, video, button, a {
+            animation: fadeIn 1s ease-in-out;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <script>
+        // Random background image selection
+        const backgrounds = [
+            "{{ url_for('static', filename='img1.jpg') }}",
+            "{{ url_for('static', filename='img2.jpg') }}",
+            "{{ url_for('static', filename='img3.jpg') }}",
+            "{{ url_for('static', filename='img4.jpg') }}"
+        ];
+        document.addEventListener("DOMContentLoaded", function() {
+            const index = Math.floor(Math.random() * backgrounds.length);
+            document.body.style.backgroundImage = `url('${backgrounds[index]}')`;
+            document.body.style.filter = 'blur(2px)'; // Initial soft blur
+            setTimeout(() => document.body.style.filter = 'none', 1000); // Fade out blur
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Object Detection in Video</h1>
+
+        <form action="/" method="post" enctype="multipart/form-data">
+            <label>Select a Video:</label>
+            <input type="file" name="video" required>
+
+            <label>Object to Detect:</label>
+            <input type="text" name="target_class" placeholder="E.g., ambulance, car, person" required>
+
+            <button type="submit">Start Detection</button>
+        </form>
+
+        {% if video_path %}
+            <h2>Analyzed Video:</h2>
+            <video width="600" controls>
+                <source src="{{ url_for('static', filename=video_path) }}" type="video/mp4">
+            </video>
+
+            <br><br>
+            <a href="{{ url_for('static', filename='tracking_log.txt') }}" download>Download Log File</a>
+        {% endif %}
+    </div>
+</body>
+</html>
