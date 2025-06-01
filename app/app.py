@@ -320,7 +320,7 @@ def main():
         status.markdown('<div class="processing-message">Processing video...</div>', unsafe_allow_html=True)
         show_progress("Video processed successfully!")
 
-        evaluator = Evaluator(iou_threshold=0.2)  # Réduit à 0.2
+        evaluator = Evaluator(iou_threshold=0.2)
 
         stats = {
             'frames': 0,
@@ -427,13 +427,22 @@ def main():
                 st.warning("No selected objects were detected in the video.")
 
             st.markdown('<div class="stSubheader">Detection Metrics (Selected Classes)</div>', unsafe_allow_html=True)
-            st.markdown(f"<div class='metric'>Precision: {stats['detection_metrics']['precision']:.3f}</div>", unsafe_allow_html=True)
-            st.markdown(f"<div class='metric'>Recall: {stats['detection_metrics']['recall']:.3f}</div>", unsafe_allow_html=True)
-            st.markdown(f"<div class='metric'>mAP: {stats['detection_metrics']['mAP']:.3f}</div>", unsafe_allow_html=True)
+            if ground_truth:
+                st.markdown(f"<div class='metric'>Precision: {stats['detection_metrics']['precision']:.3f}</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='metric'>Recall: {stats['detection_metrics']['recall']:.3f}</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='metric'>mAP: {stats['detection_metrics']['mAP']:.3f}</div>", unsafe_allow_html=True)
+            else:
+                st.markdown("<div class='metric'>Precision: Not available (Ground truth JSON required)</div>", unsafe_allow_html=True)
+                st.markdown("<div class='metric'>Recall: Not available (Ground truth JSON required)</div>", unsafe_allow_html=True)
+                st.markdown("<div class='metric'>mAP: Not available (Ground truth JSON required)</div>", unsafe_allow_html=True)
 
             st.markdown('<div class="stSubheader">Tracking Metrics (Selected Classes)</div>', unsafe_allow_html=True)
-            st.markdown(f"<div class='metric'>MOTA: {stats['tracking_metrics']['MOTA']:.3f}</div>", unsafe_allow_html=True)
-            st.markdown(f"<div class='metric'>ID Switches: {stats['tracking_metrics']['ID_Switches']}</div>", unsafe_allow_html=True)
+            if ground_truth:
+                st.markdown(f"<div class='metric'>MOTA: {stats['tracking_metrics']['MOTA']:.3f}</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='metric'>ID Switches: {stats['tracking_metrics']['ID_Switches']}</div>", unsafe_allow_html=True)
+            else:
+                st.markdown("<div class='metric'>MOTA: Not available (Ground truth JSON required)</div>", unsafe_allow_html=True)
+                st.markdown("<div class='metric'>ID Switches: Not available (Ground truth JSON required)</div>", unsafe_allow_html=True)
 
             if log_data:
                 save_log(log_data, "tracking_log_web.csv")
