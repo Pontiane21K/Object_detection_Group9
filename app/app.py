@@ -6,6 +6,7 @@ import sys
 import pandas as pd
 import time
 import json
+import numpy as np
 
 # Custom CSS directly embedded
 st.markdown(
@@ -25,7 +26,7 @@ st.markdown(
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.4); /* Dark overlay to match blue/green theme */
+        background: rgba(0, 0, 0, 0.4);
         z-index: -1;
     }
 
@@ -37,14 +38,14 @@ st.markdown(
 
     /* Individual section cards with blue background and white text */
     .section-card {
-        background: rgba(43, 108, 176, 0.9); /* Blue background matching theme */
+        background: rgba(43, 108, 176, 0.9);
         border-radius: 12px;
         padding: 20px;
         margin-bottom: 20px;
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
         border: 1px solid rgba(255, 255, 255, 0.2);
         transition: transform 0.3s ease, box-shadow 0.3s ease;
-        color: #ffffff; /* White text */
+        color: #ffffff;
     }
 
     .section-card:hover {
@@ -54,7 +55,7 @@ st.markdown(
 
     /* Specific style for Metrics section with white background */
     .metrics-section {
-        background: #ffffff; /* White background for better readability */
+        background: #ffffff;
         border-radius: 12px;
         padding: 20px;
         margin-bottom: 20px;
@@ -73,9 +74,18 @@ st.markdown(
         color: #000000 !important;
     }
 
+    /* Metric styling (inspired by second code) */
+    .metric {
+        background: #f0f2f6;
+        padding: 0.8rem;
+        border-radius: 8px;
+        margin: 0.5rem 0;
+        color: #000000 !important;
+    }
+
     /* Ensure buttons inside metrics-section are readable */
     .metrics-section .stDownloadButton>button {
-        color: #ffffff !important; /* White text on blue gradient */
+        color: #ffffff !important;
         background: linear-gradient(45deg, #007bff, #0056b3);
     }
 
@@ -91,7 +101,7 @@ st.markdown(
         font-weight: 700;
         text-align: center;
         padding: 15px;
-        background: rgba(30, 58, 138, 0.9); /* Dark blue header */
+        background: rgba(30, 58, 138, 0.9);
         border-radius: 10px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         position: relative;
@@ -101,7 +111,7 @@ st.markdown(
 
     /* Subheader styling without separation bar */
     .stSubheader {
-        color: #ffffff; /* White text */
+        color: #ffffff;
         font-family: 'Playfair Display', serif;
         font-size: 1.7em;
         margin-top: 15px;
@@ -111,8 +121,8 @@ st.markdown(
 
     /* Subheader inside metrics section */
     .metrics-section .stSubheader {
-        color: #000000; /* Black text to match the white background */
-        text-shadow: none; /* Remove shadow for better readability */
+        color: #000000;
+        text-shadow: none;
     }
 
     /* Warning styling */
@@ -122,13 +132,13 @@ st.markdown(
         border-radius: 8px;
         border-left: 5px solid #dc2626;
         animation: slideIn 0.8s ease-out;
-        color: #ffffff; /* White text for contrast */
+        color: #ffffff;
     }
 
     /* Success message styling with white background */
     .stSuccess {
-        background-color: #ffffff; /* White background */
-        color: #333333; /* Dark gray text for contrast */
+        background-color: #ffffff;
+        color: #333333;
         padding: 10px 15px;
         border-radius: 8px;
         margin-top: 10px;
@@ -138,8 +148,8 @@ st.markdown(
 
     /* Processing message styling */
     .processing-message {
-        background-color: #ffffff; /* White background */
-        color: #000000; /* Black text */
+        background-color: #ffffff;
+        color: #000000;
         padding: 10px 15px;
         border-radius: 8px;
         display: inline-block;
@@ -147,8 +157,8 @@ st.markdown(
 
     /* Button styling */
     .stButton>button {
-        background: linear-gradient(45deg, #28a745, #218838); /* Green gradient */
-        color: #ffffff; /* White text */
+        background: linear-gradient(45deg, #28a745, #218838);
+        color: #ffffff;
         border: none;
         padding: 12px 25px;
         border-radius: 8px;
@@ -178,12 +188,12 @@ st.markdown(
 
     /* Selectbox and file uploader styling */
     .stSelectbox div, .stFileUploader {
-        background-color: rgba(255, 255, 255, 0.1); /* Lighter blue tint */
+        background-color: rgba(255, 255, 255, 0.1);
         border-radius: 8px;
         padding: 10px;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         transition: transform 0.3s ease;
-        color: #ffffff; /* White text */
+        color: #ffffff;
     }
 
     .stSelectbox div:hover, .stFileUploader:hover {
@@ -192,18 +202,18 @@ st.markdown(
 
     /* Dataframe styling */
     .stDataFrame {
-        background-color: rgba(255, 255, 255, 0.1); /* Lighter blue tint */
+        background-color: rgba(255, 255, 255, 0.1);
         border-radius: 8px;
         padding: 10px;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         animation: fadeIn 1s ease-in;
-        color: #ffffff; /* White text */
+        color: #ffffff;
     }
 
     /* Dataframe inside metrics section */
     .metrics-section .stDataFrame {
-        background-color: rgba(0, 0, 0, 0.05); /* Slight gray tint for contrast */
-        color: #000000; /* Black text */
+        background-color: rgba(0, 0, 0, 0.05);
+        color: #000000;
     }
 
     /* Animations */
@@ -236,18 +246,16 @@ st.markdown(
 def show_progress(status_text):
     progress_bar = st.progress(0)
     for i in range(100):
-        time.sleep(0.01)  # Simulate processing
+        time.sleep(0.01)
         progress_bar.progress(i + 1)
     st.success(status_text)
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from utils.yolo_video import load_video, load_model, process_frame, save_log, count_id_switches
+from utils.yolo_video import load_video, load_model, process_frame, save_log, count_id_switches, Evaluator
 
 def main():
-    # Decorative header
     st.markdown('<div class="stHeader">Object Detection and Tracking</div>', unsafe_allow_html=True)
 
-    # User interface with separated sections
     with st.container():
         st.markdown('<div class="section-card">', unsafe_allow_html=True)
         st.markdown('<div class="stSubheader">Upload Video</div>', unsafe_allow_html=True)
@@ -267,10 +275,9 @@ def main():
                 help="Select the objects you want to detect in the video."
             )
         with col2:
-            st.image("https://via.placeholder.com/100x100.png?text=Logo", use_container_width=True)  # Placeholder for logo
+            st.image("https://via.placeholder.com/100x100.png?text=Logo", use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
-    # Check if selected classes are valid
     invalid_classes = [cls for cls in selected_classes if cls not in available_classes]
     if invalid_classes:
         st.error(f"The following objects are not supported: {', '.join(invalid_classes)}. Please choose from the available options.")
@@ -289,6 +296,18 @@ def main():
         ground_truth = None
         if ground_truth_file:
             ground_truth = json.load(ground_truth_file)
+            if "annotations" in ground_truth:
+                frame_ground_truth = {}
+                for ann in ground_truth["annotations"]:
+                    image_id = ann["image_id"]
+                    frame_number = str(image_id + 1)
+                    if frame_number not in frame_ground_truth:
+                        frame_ground_truth[frame_number] = []
+                    frame_ground_truth[frame_number].append({
+                        "bbox": ann["bbox"],
+                        "category_id": ann["category_id"]
+                    })
+                ground_truth = frame_ground_truth
         st.markdown('</div>', unsafe_allow_html=True)
 
     if video_file:
@@ -301,6 +320,17 @@ def main():
         status.markdown('<div class="processing-message">Processing video...</div>', unsafe_allow_html=True)
         show_progress("Video processed successfully!")
 
+        evaluator = Evaluator(iou_threshold=0.2)  # Réduit à 0.2
+
+        stats = {
+            'frames': 0,
+            'detections': 0,
+            'tracks': 0,
+            'class_counts': {cls: 0 for cls in selected_classes},
+            'detection_metrics': {'precision': 0.0, 'recall': 0.0, 'mAP': 0.0},
+            'tracking_metrics': {'MOTA': 0.0, 'ID_Switches': 0}
+        }
+
         with st.container():
             st.markdown('<div class="section-card">', unsafe_allow_html=True)
             st.markdown('<div class="stSubheader">Real-Time Detections</div>', unsafe_allow_html=True)
@@ -308,33 +338,34 @@ def main():
             log_data = []
             table_data = []
             objects_detected = False
-            metrics_list = []
-            total_fp = 0
-            total_fn = 0
-            total_gt = 0
-            frame_count = 0
             detected_classes = set()
+            frame_count = 0
 
             while cap.isOpened():
                 ret, frame = cap.read()
                 if not ret:
                     break
                 frame_count += 1
+                stats['frames'] += 1
 
-                frame, frame_log, detected, metrics = process_frame(
-                    frame, load_model("model/yolov8n.pt")[0], load_model("model/yolov8n.pt")[1], selected_class_ids=selected_class_ids,
+                frame, frame_log, detected, _ = process_frame(
+                    frame, load_model("model/yolov8n.pt")[0], load_model("model/yolov8n.pt")[1],
+                    selected_class_ids=selected_class_ids,
                     ground_truth=ground_truth.get(str(frame_count), []) if ground_truth else [],
-                    frame_number=frame_count
+                    frame_number=frame_count,
+                    evaluator=evaluator
                 )
                 log_data.extend(frame_log)
                 if detected:
                     objects_detected = True
                     for log in frame_log:
-                        detected_classes.add(log["class"])
+                        class_name = log["class"]
+                        detected_classes.add(class_name)
+                        stats['class_counts'][class_name] += 1
                         table_data.append({
-                            "Alert": f"Alert: {log['class']} detected",
+                            "Alert": f"Alert: {class_name} detected",
                             "Object ID": log["track_id"],
-                            "Class": log["class"],
+                            "Class": class_name,
                             "X1": round(log["x1"], 2),
                             "Y1": round(log["y1"], 2),
                             "X2": round(log["x2"], 2),
@@ -342,25 +373,14 @@ def main():
                             "Time": log["timestamp"],
                             "Confidence": round(log["confidence"], 2)
                         })
+                    stats['detections'] += len(frame_log)
+                    stats['tracks'] = max(stats['tracks'], len({log["track_id"] for log in frame_log}))
                     table_df = pd.DataFrame(table_data)
                     table_placeholder.dataframe(table_df, use_container_width=True)
-
-                if metrics:
-                    metrics_list.append(metrics)
-                    st.write(f"Metrics for frame {frame_count}: Precision = {metrics.get('precision', 0):.2f}, Recall = {metrics.get('recall', 0):.2f}, mAP = {metrics.get('mAP', 0):.2f}")
-                    if ground_truth and str(frame_count) in ground_truth:
-                        frame_gt = ground_truth[str(frame_count)]
-                        total_gt += len(frame_gt)
-                        frame_fp = len(frame_log) - (metrics.get("precision", 0) * len(frame_log) if len(frame_log) > 0 else 0)
-                        frame_fn = len(frame_gt) - (metrics.get("recall", 0) * len(frame_gt) if len(frame_gt) > 0 else 0)
-                        total_fp += frame_fp
-                        total_fn += frame_fn
-                        st.write(f"Frame {frame_count} - False Positives: {frame_fp}, False Negatives: {frame_fn}, Total GT: {len(frame_gt)}")
 
                 frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                 stframe.image(frame_rgb, use_container_width=True)
 
-            # Display detection table with message for undetected classes
             table_df = pd.DataFrame(table_data)
             table_placeholder.dataframe(table_df, use_container_width=True)
             non_detected_classes = [cls for cls in selected_classes if cls not in detected_classes]
@@ -385,31 +405,35 @@ def main():
                 st.download_button("Download Table", data=csv, file_name="detection_table.csv")
             st.markdown('</div>', unsafe_allow_html=True)
 
+        detection_metrics = evaluator.evaluate_detection()
+        tracking_metrics = evaluator.evaluate_tracking()
+
+        stats['detection_metrics'] = detection_metrics
+        stats['tracking_metrics'] = tracking_metrics
+
         with st.container():
             st.markdown('<div class="metrics-section">', unsafe_allow_html=True)
-            st.markdown('<div class="stSubheader">Metrics and Logs</div>', unsafe_allow_html=True)
-            if metrics_list:
-                avg_precision = sum(m["precision"] for m in metrics_list) / len(metrics_list)
-                avg_recall = sum(m["recall"] for m in metrics_list) / len(metrics_list)
-                avg_mAP = sum(m["mAP"] for m in metrics_list) / len(metrics_list)
-                st.write(f"Metrics calculated - Precision: {avg_precision:.2f}, Recall: {avg_recall:.2f}, mAP: {avg_mAP:.2f}")
-                st.write(f"Total False Positives: {total_fp}, Total False Negatives: {total_fn}, Total Ground Truth: {total_gt}")
+            st.markdown('<div class="stSubheader">Metrics</div>', unsafe_allow_html=True)
 
-            id_switches = count_id_switches(log_data)
-            st.write(f"ID Switches: {id_switches}")
+            st.markdown(f"<div class='metric'>Frames Processed: {stats['frames']}</div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='metric'>Total Detections: {stats['detections']}</div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='metric'>Unique Tracks: {stats['tracks']}</div>", unsafe_allow_html=True)
 
-            if total_gt > 0:
-                mota = 1 - (total_fp + total_fn + id_switches) / total_gt
-                st.markdown(
-    f"<p style='color:white;'>MOTA: {mota:.2f}</p>",
-    unsafe_allow_html=True
-)
+            st.markdown('<div class="stSubheader">Detections by Selected Class</div>', unsafe_allow_html=True)
+            for class_name, count in stats['class_counts'].items():
+                if count > 0:
+                    st.markdown(f"<div class='metric'>{class_name.capitalize()}: {count}</div>", unsafe_allow_html=True)
+            if sum(stats['class_counts'].values()) == 0:
+                st.warning("No selected objects were detected in the video.")
 
-            else:
-                st.markdown(
-                    "<p style='color:white;'>MOTA cannot be calculated: no ground truth available.</p>",
-                    unsafe_allow_html=True
-                )
+            st.markdown('<div class="stSubheader">Detection Metrics (Selected Classes)</div>', unsafe_allow_html=True)
+            st.markdown(f"<div class='metric'>Precision: {stats['detection_metrics']['precision']:.3f}</div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='metric'>Recall: {stats['detection_metrics']['recall']:.3f}</div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='metric'>mAP: {stats['detection_metrics']['mAP']:.3f}</div>", unsafe_allow_html=True)
+
+            st.markdown('<div class="stSubheader">Tracking Metrics (Selected Classes)</div>', unsafe_allow_html=True)
+            st.markdown(f"<div class='metric'>MOTA: {stats['tracking_metrics']['MOTA']:.3f}</div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='metric'>ID Switches: {stats['tracking_metrics']['ID_Switches']}</div>", unsafe_allow_html=True)
 
             if log_data:
                 save_log(log_data, "tracking_log_web.csv")
