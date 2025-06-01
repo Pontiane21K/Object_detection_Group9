@@ -127,8 +127,6 @@ A live demo is available at: https://objectdetectiongroup9-web-app.streamlit.app
 License
 This project is licensed under the MIT License.
 
-Contributors
-Your Name - Developer, AIMS Senegal
 
 Contact
 For any queries or contributions, contact kouecking.p.blondele@aims-senegal.org or open an issue.
