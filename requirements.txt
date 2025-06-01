@@ -1,9 +1,14 @@
 streamlit
 opencv-python
+ultralytics
 torch
 torchvision
 numpy
-Pillow
-ultralytics
+pandas
+matplotlib
+seaborn
 scikit-learn
+librosa
+soundfile
 lap
+Pillow
