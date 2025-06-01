@@ -1,5 +1,8 @@
  Real-Time Detection and Tracking of Specific Objects in Videos
+
+ 
 This project implements a real-time computer vision system that detects and tracks specific objects—such as ambulances, fire trucks, or police cars—within a video stream. It combines YOLOv8 for object detection with DeepSORT for tracking, and features an interactive Streamlit web interface for video upload, object selection, and real-time visualization.
+
 
  Project Objective
 Develop a real-time system to:
